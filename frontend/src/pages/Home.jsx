@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
 import bannerImg from '../assets/banner.jpg'; // yahan apni file ka naam use karo
 
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 function Home() {
   const [products, setProducts] = useState([]);
