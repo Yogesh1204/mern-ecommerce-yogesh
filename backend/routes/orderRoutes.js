@@ -3,7 +3,7 @@ const Order = require('../models/Order');
 
 const router = express.Router();
 
-// POST /api/orders  -> place an order (COD for now)
+// POST /api/orders  -> place an order (COD)
 router.post('/', async (req, res) => {
   try {
     const {
@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// GET /api/orders  -> list orders (later we can filter by user)
+// GET /api/orders  -> list all orders
 router.get('/', async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
@@ -86,6 +86,20 @@ router.patch('/:id/status', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Failed to update order status' });
+  }
+});
+
+// DELETE /api/orders/:id  -> delete an order (admin)
+router.delete('/:id', async (req, res) => {
+  try {
+    const order = await Order.findByIdAndDelete(req.params.id);
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+    res.json({ message: 'Order deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to delete order' });
   }
 });
 
