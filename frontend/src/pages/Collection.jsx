@@ -2,15 +2,15 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 function Collection() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // URL se category read karna
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const categoryFromUrl = searchParams.get('category') || 'All';
 
   const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
@@ -33,10 +33,20 @@ function Collection() {
     fetchProducts();
   }, []);
 
-  // jab bhi URL ki category change ho (footer se click), state update karo
+  // Agar URL change ho (footer se aaoge etc.), to state bhi update ho
   useEffect(() => {
     setSelectedCategory(categoryFromUrl);
   }, [categoryFromUrl]);
+
+  const handleCategoryClick = (cat) => {
+    setSelectedCategory(cat);
+
+    if (cat === 'All') {
+      setSearchParams({});
+    } else {
+      setSearchParams({ category: cat });
+    }
+  };
 
   const categories = ['All', ...Array.from(new Set(products.map((p) => p.category)))];
 
@@ -57,7 +67,6 @@ function Collection() {
     <div className="page-container">
       <h1 className="page-title">Collection</h1>
 
-      {/* Category filter buttons */}
       <div
         style={{
           margin: '16px 0',
@@ -69,7 +78,7 @@ function Collection() {
         {categories.map((cat) => (
           <button
             key={cat}
-            onClick={() => setSelectedCategory(cat)}
+            onClick={() => handleCategoryClick(cat)}
             style={{
               padding: '6px 12px',
               borderRadius: '16px',
@@ -85,7 +94,6 @@ function Collection() {
         ))}
       </div>
 
-      {/* Products grid */}
       <div className="product-grid">
         {filteredProducts.map((product) => (
           <ProductCard key={product._id} product={product} />
